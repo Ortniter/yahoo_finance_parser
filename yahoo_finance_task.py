@@ -174,3 +174,19 @@ class HistoricalDataParser(YahooFinanceBaseParser):
             company_name = self.get_company_name(html)
             self.write_csv(csv_data, f'historical_data/{company_name}')
         self.driver.quit()
+
+
+class LatestNewsParser(YahooFinanceBaseParser):
+    def __init__(self, companies):
+        super().__init__(companies)
+
+    def get_html(self, url):
+        """
+        This method extracts html from summary page
+        :param url: summary page url
+        :return: html to parse
+        """
+        self.driver.get(url)
+        sleep(2)
+        html = self.driver.page_source
+        return html
