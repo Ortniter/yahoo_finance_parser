@@ -161,3 +161,16 @@ class HistoricalDataParser(YahooFinanceBaseParser):
                 three_day_before_change = '-'
             csv_data += f"{value['row']},{three_day_before_change}\n"
         return csv_data
+
+    def work(self):
+        if not os.path.exists('historical_data'):
+            os.mkdir('historical_data')
+        for company in self.companies:
+            html = self.get_html(f'{self.base_url}/quote/{company}/history?p={company}')
+            url = self.get_historical_data_url(html, company)
+            data = self.get_response(url).text
+            data_dict = self.create_historical_data_dict(data)
+            csv_data = self.prepare_csv_data(data_dict)
+            company_name = self.get_company_name(html)
+            self.write_csv(csv_data, f'historical_data/{company_name}')
+        self.driver.quit()
