@@ -2,10 +2,12 @@ from selenium import webdriver
 from time import sleep
 from bs4 import BeautifulSoup
 import requests
+import datetime
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import os
 from logger import Logger
 
 logger = Logger('yahoo_parser')
@@ -128,3 +130,16 @@ class HistoricalDataParser(YahooFinanceBaseParser):
             return False
         logger.debug('Dict with historical data has been created')
         return data_dict
+
+    @staticmethod
+    def get_previous_date(date, days):
+        """
+        :param date: takes date as str
+        :param days: quantity of days
+        :return: previous_date
+        """
+        year, month, day = date.split('-')
+        current_date = datetime.date(int(year), int(month), int(day))
+        previous_date = current_date - datetime.timedelta(days=days)
+        previous_date = str(previous_date)
+        return previous_date
