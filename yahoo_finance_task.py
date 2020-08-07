@@ -1,7 +1,11 @@
 from selenium import webdriver
+from time import sleep
 from bs4 import BeautifulSoup
 import requests
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from logger import Logger
 
 logger = Logger('yahoo_parser')
@@ -63,3 +67,29 @@ class YahooFinanceBaseParser:
 
     def work(self):
         raise NotImplementedError('Use parse_html method from child')
+
+
+class HistoricalDataParser(YahooFinanceBaseParser):
+    def __init__(self, companies):
+        super().__init__(companies)
+        self.historical_data_columns = 'Date,Open,High,Low,Close,Adj Close,Volume'
+
+    def get_html(self, url):
+        """
+        This method extracts html from historical data page
+        :param url: historical data page url
+        :return: html to parse
+        """
+        self.driver.get(url)
+
+        time_period_btn = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//div[@class="Pos(r) D(ib) Va(m) Mstart(8px)"]')))
+        time_period_btn.click()
+
+        max_btn = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//button[@data-value="MAX"]')))
+        max_btn.click()
+
+        sleep(2)
+        html = self.driver.page_source
+        return html
