@@ -174,3 +174,55 @@ class HistoricalDataParser(YahooFinanceBaseParser):
             company_name = self.get_company_name(html)
             self.write_csv(csv_data, f'historical_data/{company_name}')
         self.driver.quit()
+
+
+class LatestNewsParser(YahooFinanceBaseParser):
+    def __init__(self, companies):
+        super().__init__(companies)
+
+    def get_html(self, url):
+        """
+        This method extracts html from summary page
+        :param url: summary page url
+        :return: html to parse
+        """
+        self.driver.get(url)
+        sleep(2)
+        html = self.driver.page_source
+        return html
+
+    def prepare_csv_data(self, html):
+        """
+        This method prepares data to be witten to new csv file
+        :param html: takes html from summary page
+        :return: csv_data
+        """
+        soup = BeautifulSoup(html, 'lxml')
+        heads = soup.find_all('h3', attrs={'class': 'Mb(5px)'})
+        csv_data = 'Link,Title\n'
+        for head in heads:
+            a_tag = head.find('a')
+            href = a_tag.get('href')
+            url = f'{self.base_url}{href}'
+            title = a_tag.text
+            title = ' '.join(title.split(','))
+            csv_data += f'{url},{title}\n'
+        return csv_data
+
+    def work(self):
+        if not os.path.exists('latest_news'):
+            os.mkdir('latest_news')
+        for company in self.companies:
+            html = self.get_html(f'{self.base_url}/quote/{company}/news?p={company}')
+            csv_data = self.prepare_csv_data(html)
+            company_name = self.get_company_name(html)
+            self.write_csv(csv_data, f'latest_news/{company_name}_latest_news')
+        self.driver.quit()
+
+
+if __name__ == '__main__':
+    companies_list = ['PD', 'ZUO', 'PINS', 'ZM', 'DOCU', 'CLDR', 'RUN']
+    data_parser = HistoricalDataParser(companies_list)
+    data_parser.work()
+    news_parser = LatestNewsParser(companies_list)
+    news_parser.work()
