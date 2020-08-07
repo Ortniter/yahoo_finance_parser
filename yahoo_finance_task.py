@@ -2,6 +2,9 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import requests
 from selenium.webdriver.firefox.options import Options
+from logger import Logger
+
+logger = Logger('yahoo_parser')
 
 
 class YahooFinanceBaseParser:
@@ -27,6 +30,7 @@ class YahooFinanceBaseParser:
         response = requests.get(url)
         if response.status_code == 200:
             return response
+        logger.error(message=f'Failed to get HTML, code {response.status_code}:\n{response.text}')
         return False
 
     @staticmethod
@@ -38,6 +42,7 @@ class YahooFinanceBaseParser:
         """
         with open(f'{file_name}.csv', 'a') as file:
             file.write(csv_data)
+        logger.info(message=f'{file_name} saved')
 
     @staticmethod
     def get_company_name(html):
