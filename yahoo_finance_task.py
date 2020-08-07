@@ -143,3 +143,21 @@ class HistoricalDataParser(YahooFinanceBaseParser):
         previous_date = current_date - datetime.timedelta(days=days)
         previous_date = str(previous_date)
         return previous_date
+
+    def prepare_csv_data(self, data_dict):
+        """
+        This method prepares data to be witten to new csv file
+        :param data_dict: takes dict where date is a key that has a dict as a value with close_price and a row
+        :return: csv_data
+        """
+        csv_data = f'{self.historical_data_columns},3day_before_change\n'
+        for key, value in data_dict.items():
+            previous_date = self.get_previous_date(key, 3)
+            if previous_date in data_dict:
+                current_close_price = float(value['close_price'])
+                previous_close_price = float(data_dict[previous_date]['close_price'])
+                three_day_before_change = round(current_close_price / previous_close_price, 6)
+            else:
+                three_day_before_change = '-'
+            csv_data += f"{value['row']},{three_day_before_change}\n"
+        return csv_data
