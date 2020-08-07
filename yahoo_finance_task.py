@@ -93,3 +93,16 @@ class HistoricalDataParser(YahooFinanceBaseParser):
         sleep(2)
         html = self.driver.page_source
         return html
+
+    @staticmethod
+    def get_historical_data_url(html, company):
+        """
+        This method extracts download link from historical data page
+        :param html: historical data page html
+        :param company: company's TICKER
+        :return: url with all historical data
+        """
+        soup = BeautifulSoup(html, 'lxml')
+        data_url = soup.find('a', download=f"{company}.csv").get('href').strip()
+        return data_url
+
