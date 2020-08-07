@@ -218,3 +218,11 @@ class LatestNewsParser(YahooFinanceBaseParser):
             company_name = self.get_company_name(html)
             self.write_csv(csv_data, f'latest_news/{company_name}_latest_news')
         self.driver.quit()
+
+
+if __name__ == '__main__':
+    companies_list = ['PD', 'ZUO', 'PINS', 'ZM', 'DOCU', 'CLDR', 'RUN']
+    data_parser = HistoricalDataParser(companies_list)
+    data_parser.work()
+    news_parser = LatestNewsParser(companies_list)
+    news_parser.work()
