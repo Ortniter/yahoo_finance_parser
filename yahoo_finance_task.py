@@ -52,3 +52,9 @@ class YahooFinanceBaseParser:
         company_name = ''.join(company_name.split(' '))
         company_name = company_name.split(',')[0]
         return company_name
+
+    def prepare_csv_data(self, data):
+        raise NotImplementedError('Use parse_html method from child')
+
+    def work(self):
+        raise NotImplementedError('Use parse_html method from child')
