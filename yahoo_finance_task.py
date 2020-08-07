@@ -190,3 +190,21 @@ class LatestNewsParser(YahooFinanceBaseParser):
         sleep(2)
         html = self.driver.page_source
         return html
+
+    def prepare_csv_data(self, html):
+        """
+        This method prepares data to be witten to new csv file
+        :param html: takes html from summary page
+        :return: csv_data
+        """
+        soup = BeautifulSoup(html, 'lxml')
+        heads = soup.find_all('h3', attrs={'class': 'Mb(5px)'})
+        csv_data = 'Link,Title\n'
+        for head in heads:
+            a_tag = head.find('a')
+            href = a_tag.get('href')
+            url = f'{self.base_url}{href}'
+            title = a_tag.text
+            title = ' '.join(title.split(','))
+            csv_data += f'{url},{title}\n'
+        return csv_data
