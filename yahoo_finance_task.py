@@ -208,3 +208,13 @@ class LatestNewsParser(YahooFinanceBaseParser):
             title = ' '.join(title.split(','))
             csv_data += f'{url},{title}\n'
         return csv_data
+
+    def work(self):
+        if not os.path.exists('latest_news'):
+            os.mkdir('latest_news')
+        for company in self.companies:
+            html = self.get_html(f'{self.base_url}/quote/{company}/news?p={company}')
+            csv_data = self.prepare_csv_data(html)
+            company_name = self.get_company_name(html)
+            self.write_csv(csv_data, f'latest_news/{company_name}_latest_news')
+        self.driver.quit()
