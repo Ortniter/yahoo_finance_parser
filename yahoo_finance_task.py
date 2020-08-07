@@ -106,3 +106,25 @@ class HistoricalDataParser(YahooFinanceBaseParser):
         data_url = soup.find('a', download=f"{company}.csv").get('href').strip()
         return data_url
 
+    @staticmethod
+    def create_historical_data_dict(data):
+        """
+        This method maps date with a close_price and a row for future checks
+        :param data: data from historical_data csv file
+        :return: dict where date is a key that has a dict as a value with close_price and a row
+        """
+        separated_data = data.split('\n')
+        data_dict = dict()
+
+        for row in separated_data[1:]:
+            if not row:
+                continue
+            else:
+                date = row.split(',')[0]
+                close_price = row.split(',')[4]
+                data_dict[date] = {'close_price': close_price, 'row': row}
+        if not data_dict:
+            logger.error('Historical data dict was not prepared!')
+            return False
+        logger.debug('Dict with historical data has been created')
+        return data_dict
