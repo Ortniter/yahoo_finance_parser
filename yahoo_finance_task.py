@@ -28,3 +28,14 @@ class YahooFinanceBaseParser:
         if response.status_code == 200:
             return response
         return False
+
+    @staticmethod
+    def write_csv(csv_data, file_name):
+        """
+        :param csv_data: data prepared to be written in csv file
+        :param file_name: desired name of the file
+        :return: None
+        """
+        with open(f'{file_name}.csv', 'a') as file:
+            file.write(csv_data)
+        
