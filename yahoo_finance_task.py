@@ -1,5 +1,5 @@
 from selenium import webdriver
-
+from bs4 import BeautifulSoup
 import requests
 from selenium.webdriver.firefox.options import Options
 
@@ -38,4 +38,17 @@ class YahooFinanceBaseParser:
         """
         with open(f'{file_name}.csv', 'a') as file:
             file.write(csv_data)
-        
+
+    @staticmethod
+    def get_company_name(html):
+        """
+        This method extracts company's name from html
+        :param html: html of the news or history page
+        :return: name without spaces or comas
+        """
+        soup = BeautifulSoup(html, 'lxml')
+        company_name = soup.find('h1', attrs={'class': 'D(ib) Fz(18px)'}).text
+        company_name = company_name.split('Inc')[0].strip()
+        company_name = ''.join(company_name.split(' '))
+        company_name = company_name.split(',')[0]
+        return company_name
