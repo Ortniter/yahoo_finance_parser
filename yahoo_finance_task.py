@@ -31,7 +31,7 @@ class YahooFinanceBaseParser:
     def get_response(url):
         """
         :param url: takes url
-        :return: response from url or False if status_code == 200
+        :return: return response from url or False if status_code != 200
         """
         response = requests.get(url)
         if response.status_code == 200:
