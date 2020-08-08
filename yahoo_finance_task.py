@@ -25,7 +25,7 @@ class YahooFinanceBaseParser:
         self.base_url = 'https://finance.yahoo.com'
 
     def get_html(self, url):
-        raise NotImplementedError('Use parse_html method from child')
+        raise NotImplementedError('Use get_html method from child')
 
     @staticmethod
     def get_response(url):
@@ -65,10 +65,10 @@ class YahooFinanceBaseParser:
         return company_name
 
     def prepare_csv_data(self, data):
-        raise NotImplementedError('Use parse_html method from child')
+        raise NotImplementedError('Use prepare_csv_data method from child')
 
     def work(self):
-        raise NotImplementedError('Use parse_html method from child')
+        raise NotImplementedError('Use work method from child')
 
 
 class HistoricalDataParser(YahooFinanceBaseParser):
